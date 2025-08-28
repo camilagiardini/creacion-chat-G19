@@ -3,66 +3,73 @@
 import Button from "../../components/Button"
 import Input from "../../components/Input"
 import Link from "../../components/Link"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
-
-export default function LoginPage() {
-    let entrar = false
+export default function RegisterPage() {
     const [usuarios, setUsuarios] = useState([])
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
     const router = useRouter()
-    
-    useEffect(() => {
-        fetch("http://localhost:4006/usuarios") //trae usuarios y lo devuelve
-        .then(response => response.json())
-        .then(result => {
-            setUsuarios(result)
-        })
-    })   //.then es la forma para comunicarte con elback 
 
     useEffect(() => {
-        console.log(usuarios)
-    }, [usuarios])
+        fetch("http://localhost:4006/usuarios")
+            .then(response => response.json())
+            .then(result => setUsuarios(result))
+            .catch(err => console.error("Error al cargar usuarios:", err))
+    }, [])
 
-    function singIn() {
-        for (let i=0; i < usuarios.lenght; i++)
-            if (usuarios[i].mail == user) {
-                if (usuarios[i].contraseña == password) {
-                    entrar = true
-                    console.log ("entramos")
-                    router.push("./../chat")
-                }
+    async function singUp() {
+        const nuevoUsuario = {
+            user: user,
+            password: password
+        }
+
+        const existe = usuarios.some(u => u.user === nuevoUsuario.user)
+
+        if (existe) {
+            console.log("Ese usuario ya existe")
+            return
+        }
+
+        try {
+            const response = await fetch("http://localhost:4006/usuarios", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(nuevoUsuario)
+            })
+
+            if (response.ok) {
+                console.log("Usuario creado con éxito")
+                router.push("./login")
+            } else {
+                console.log("Error al crear el usuario")
             }
-    }
-    if (entrar == false) {
-        console.log("Usuario o Contraseña incorrectos")
-    }
-
-    function singUp(){
-
+        } catch (error) {
+            console.error("Hubo un problema con el registro:", error)
+        }
     }
 
+    function saveUser(event) {
+        setUser(event.target.value)
+    }
     function savePassword(event) {
         setPassword(event.target.value)
     }
-    function saveUser(event){
-        setUser(event.target.value)
-    }
 
-
-    return(
+    return (
         <>
-            <h1>Este serà el login</h1>
-            <div className="contenedor-login">
-                <div className="inputs-login">
-                    <input placeHolder="Escriba su email" id="email" className="inputs-login" type="email" onChange={saveUser}/>
-                    <input placeHolder="Escriba su contraseña" id="password" className="inputs-login" type="password" onChange={savePassword}/>
-                    <Button text="Sing in" onClick={singIn}></Button>
-                    <h3>¿Es tu primera vez ingresando?</h3>
-                    <Link href="./register">Registrarse</Link>
+            <h1>Registrarse</h1>
+            <div className="contenedor-register">
+                <div className="inputs-register">
+                    <input placeholder="Usuario" type="text" onChange={saveUser} />
+                    <input placeholder="Contraseña" type="password" onChange={savePassword} />
+                    
+                    <Button text="Crear cuenta" onClick={singUp}></Button>
+                    <h3>¿Ya tienes cuenta?</h3>
+                    <Link href="./login">Inicia sesión</Link>
                 </div>
             </div>
-            <Form></Form>
         </>
     )
 }
