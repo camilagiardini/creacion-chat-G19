@@ -1,10 +1,11 @@
 "use client"
 
-import Button from "../../components/Button"
-import Input from "../../components/Input"
-import Link from "../../components/Link"
-import { useState } from "react"
+import Button from "@/components/Button"
+import Input from "@/components/Input"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Form from "@/components/Form"
 
 
 export default function LoginPage() {
@@ -15,19 +16,17 @@ export default function LoginPage() {
     const router = useRouter()
     
     useEffect(() => {
-        fetch("http://localhost:4006/usuarios") //trae usuarios y lo devuelve
+        fetch("http://localhost:4000/usuarios") //trae usuarios y lo devuelve
         .then(response => response.json())
         .then(result => {
             setUsuarios(result)
+            console.log(usuarios)
         })
     })   //.then es la forma para comunicarte con elback 
 
-    useEffect(() => {
-        console.log(usuarios)
-    }, [usuarios])
 
     function singIn() {
-        for (let i=0; i < usuarios.lenght; i++)
+        for (let i=0; i < usuarios.lenght; i++) {
             if (usuarios[i].mail == user) {
                 if (usuarios[i].contraseña == password) {
                     entrar = true
@@ -35,9 +34,10 @@ export default function LoginPage() {
                     router.push("./../chat")
                 }
             }
-    }
-    if (entrar == false) {
-        console.log("Usuario o Contraseña incorrectos")
+        }
+        if (entrar == false) {
+                console.log("Usuario o Contraseña incorrectos")
+            }
     }
     function savePassword(event) {
         setPassword(event.target.value)
@@ -52,8 +52,9 @@ export default function LoginPage() {
             <h1>Este serà el login</h1>
             <div className="contenedor-login">
                 <div className="inputs-login">
-                    <input placeHolder="Escriba su email" id="email" className="inputs-login" type="email" onChange={saveUser}/>
-                    <input placeHolder="Escriba su contraseña" id="password" className="inputs-login" type="password" onChange={savePassword}/>
+                    <Input placeholder="Escriba su email" id="email" className="inputs-login" type="email" onChange={saveUser}/>
+                    
+                    <Input placeholder="Escriba su contraseña" id="password" className="inputs-login" type="password" onChange={savePassword}/>
                     <Button text="Sing in" onClick={singIn}></Button>
                     <h3>¿Es tu primera vez ingresando?</h3>
                     <Link href="./register">Registrarse</Link>
