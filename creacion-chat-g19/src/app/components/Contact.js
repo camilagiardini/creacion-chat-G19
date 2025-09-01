@@ -13,5 +13,5 @@ export default function Contact(props){
 }
 
 /*let contactos = [
-    {nombre:Martin, foto:lafoto, nroTelefono: 1456416}
+    {nombre:Martin, foto:foto4, nroTelefono: 1456416}
 ]*/
