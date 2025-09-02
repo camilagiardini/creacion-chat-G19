@@ -1,9 +1,9 @@
 "use client"
 
-import Button from "../../components/Button"
-import Input from "../../components/Input"
-import Link from "../../components/Link"
-import { useState, useEffect } from "react"
+import Button from "@/components/Button"
+import Input from "@/components/Input"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export default function RegisterPage() {
@@ -62,14 +62,20 @@ export default function RegisterPage() {
             <h1>Registrarse</h1>
             <div className="contenedor-register">
                 <div className="inputs-register">
-                    <input placeholder="Usuario" type="text" onChange={saveUser} />
-                    <input placeholder="Contraseña" type="password" onChange={savePassword} />
+                    <Input placeholder="Usuario" type="text" onChange={saveUser} />
+                    <Input placeholder="Contraseña" type="password" onChange={savePassword} />
                     
                     <Button text="Crear cuenta" onClick={singUp}></Button>
                     <h3>¿Ya tienes cuenta?</h3>
                     <Link href="./login">Inicia sesión</Link>
                 </div>
             </div>
+            
         </>
+        
     )
 }
+
+
+
+
