@@ -49,18 +49,19 @@ export default function LoginPage() {
 
     return(
         <>
-            <h1>Este serà el login</h1>
+            <h1>Este sera el login</h1>
             <div className="contenedor-login">
                 <div className="inputs-login">
                     <Input placeholder="Escriba su email" id="email" className="inputs-login" type="email" onChange={saveUser}/>
                     
                     <Input placeholder="Escriba su contraseña" id="password" className="inputs-login" type="password" onChange={savePassword}/>
                     <Button text="Sing in" onClick={singIn}></Button>
-                    <h3>¿Es tu primera vez ingresando?</h3>
-                    <Link href="./register">Registrarse</Link>
+                    <h3>
+                    <Link href="./register">¿No tienes cuenta?</Link>
+                    </h3>
                 </div>
             </div>
-            <Form></Form>
+            
         </>
     )
 }   

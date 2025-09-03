@@ -57,17 +57,22 @@ export default function RegisterPage() {
         setPassword(event.target.value)
     }
 
-    return (
+return (
         <>
             <h1>Registrarse</h1>
             <div className="contenedor-register">
                 <div className="inputs-register">
+                    <h3><label htmlFor="usuario">Usuario:</label>
                     <Input placeholder="Usuario" type="text" onChange={saveUser} />
+                    </h3>
+                    <h3>
+                    <label htmlFor="usuario">Contraseña:</label>
                     <Input placeholder="Contraseña" type="password" onChange={savePassword} />
-                    
+                    </h3>
                     <Button text="Crear cuenta" onClick={singUp}></Button>
-                    <h3>¿Ya tienes cuenta?</h3>
-                    <Link href="./login">Inicia sesión</Link>
+                    <h4>
+                    <Link href="./login">¿Ya tienes cuenta?</Link>
+                    </h4>
                 </div>
             </div>
             
@@ -75,7 +80,5 @@ export default function RegisterPage() {
         
     )
 }
-
-
 
 
