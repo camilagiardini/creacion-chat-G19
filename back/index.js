@@ -196,9 +196,17 @@ app.delete('/eliminarCanciones', async function (req,res) {
 app.get('/mostrarContactos', async function(req,res){
     try {
         const response = await realizarQuery(`
-        SELECT nombre, foto_perfil, online
-        FROM Users  
-        INNER JOIN UsersChats on Users.id_user_chat
+        SELECT 
+        nombre,
+        foto_perfil,
+        online
+        FROM users 
+        LEFT JOIN userschats 
+        ON id_user = id_user
+        LEFT JOIN chats 
+        ON id_chat = id_chat
+        WHERE id_user <> 1 
+        OR (tipo_chat = 'grupo' AND id_user = 1);
         
     `)
         console.log(response)
