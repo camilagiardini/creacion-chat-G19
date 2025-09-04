@@ -58,26 +58,37 @@ export default function RegisterPage() {
     }
 
 return (
-        <>
-            <h1>Registrarse</h1>
-            <div className="contenedor-register">
-                <div className="inputs-register">
-                    <h3><label htmlFor="usuario">Usuario:</label>
-                    <Input placeholder="Usuario" type="text" onChange={saveUser} />
-                    </h3>
-                    <h3>
-                    <label htmlFor="usuario">Contraseña:</label>
-                    <Input placeholder="Contraseña" type="password" onChange={savePassword} />
-                    </h3>
-                    <Button text="Crear cuenta" onClick={singUp}></Button>
-                    <h4>
-                    <Link href="./login">¿Ya tienes cuenta?</Link>
-                    </h4>
+        <div style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%)'
+        }}>
+            <div style={{
+                background: '#fff',
+                borderRadius: '20px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+                padding: '40px',
+                width: '350px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '20px',
+                alignItems: 'center'
+            }}>
+                <h1 style={{fontSize: '2rem', fontWeight: 'bold', color: '#6366f1'}}>Registrarse</h1>
+                <div style={{width: '100%'}}>
+                    <label style={{fontWeight: '500', color: '#64748b'}}>Usuario:</label>
+                    <Input placeholder="Usuario" type="text" onChange={saveUser} style={{width: '100%', marginBottom: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', padding: '10px'}}/>
                 </div>
+                <div style={{width: '100%'}}>
+                    <label style={{fontWeight: '500', color: '#64748b'}}>Contraseña:</label>
+                    <Input placeholder="Contraseña" type="password" onChange={savePassword} style={{width: '100%', marginBottom: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', padding: '10px'}}/>
+                </div>
+                <Button text="Crear cuenta" onClick={singUp} style={{width: '100%', background: '#6366f1', color: '#fff', borderRadius: '10px', padding: '12px', fontWeight: 'bold', fontSize: '1rem', border: 'none', boxShadow: '0 2px 8px rgba(99,102,241,0.15)'}}/>
+                <Link href="./login" style={{color: '#6366f1', fontWeight: '500', marginTop: '10px'}}>¿Ya tienes cuenta? Inicia sesión</Link>
             </div>
-            
-        </>
-        
+        </div>
     )
 }
 
