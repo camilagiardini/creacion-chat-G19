@@ -5,11 +5,13 @@ import Input from "@/components/Input"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import styles from "./register.styles.css"
 
 export default function RegisterPage() {
     const [usuarios, setUsuarios] = useState([])
-    const [user, setUser] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
     const router = useRouter()
 
     useEffect(() => {
@@ -19,16 +21,17 @@ export default function RegisterPage() {
             .catch(err => console.error("Error al cargar usuarios:", err))
     }, [])
 
-    async function singUp() {
+    async function singUp(e) {
+        e.preventDefault()
         const nuevoUsuario = {
-            user: user,
+            email: email,
             password: password
         }
 
-        const existe = usuarios.some(u => u.user === nuevoUsuario.user)
+        const existe = usuarios.some(u => u.email === nuevoUsuario.email)
 
         if (existe) {
-            console.log("Ese usuario ya existe")
+            setError("Ese correo ya está registrado")
             return
         }
 
@@ -40,56 +43,47 @@ export default function RegisterPage() {
             })
 
             if (response.ok) {
-                console.log("Usuario creado con éxito")
-                router.push("./login")
+                router.push("/login")
             } else {
-                console.log("Error al crear el usuario")
+                setError("Error al crear el usuario")
             }
         } catch (error) {
-            console.error("Hubo un problema con el registro:", error)
+            setError("Hubo un problema con el registro")
         }
     }
 
-    function saveUser(event) {
-        setUser(event.target.value)
-    }
-    function savePassword(event) {
-        setPassword(event.target.value)
-    }
-
-return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%)'
-        }}>
-            <div style={{
-                background: '#fff',
-                borderRadius: '20px',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-                padding: '40px',
-                width: '350px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '20px',
-                alignItems: 'center'
-            }}>
-                <h1 style={{fontSize: '2rem', fontWeight: 'bold', color: '#6366f1'}}>Registrarse</h1>
-                <div style={{width: '100%'}}>
-                    <label style={{fontWeight: '500', color: '#64748b'}}>Usuario:</label>
-                    <Input placeholder="Usuario" type="text" onChange={saveUser} style={{width: '100%', marginBottom: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', padding: '10px'}}/>
-                </div>
-                <div style={{width: '100%'}}>
-                    <label style={{fontWeight: '500', color: '#64748b'}}>Contraseña:</label>
-                    <Input placeholder="Contraseña" type="password" onChange={savePassword} style={{width: '100%', marginBottom: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', padding: '10px'}}/>
-                </div>
-                <Button text="Crear cuenta" onClick={singUp} style={{width: '100%', background: '#6366f1', color: '#fff', borderRadius: '10px', padding: '12px', fontWeight: 'bold', fontSize: '1rem', border: 'none', boxShadow: '0 2px 8px rgba(99,102,241,0.15)'}}/>
-                <Link href="./login" style={{color: '#6366f1', fontWeight: '500', marginTop: '10px'}}>¿Ya tienes cuenta? Inicia sesión</Link>
-            </div>
+    return (
+        <div className="login-container">
+            <h2>Crear Cuenta</h2>
+            <form onSubmit={singUp}>
+                <input
+                    type="email"
+                    placeholder="Correo electrónico"
+                    value={email}
+                    onChange={(e) => {
+                        console.log(e.target.value)
+                        setEmail(e.target.value)}
+                    }
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => {
+                        console.log(e.target.value)
+                        setPassword(e.target.value)}
+                    }
+                    
+                    required
+                />
+                <button type="submit">Registrarse</button>
+            </form>
+            {error && <p className="error">{error}</p>}
+            <p>
+                ¿Ya tienes cuenta?{" "}
+                <Link href="/login">Inicia sesión aquí</Link>
+            </p>
         </div>
     )
 }
-
-
