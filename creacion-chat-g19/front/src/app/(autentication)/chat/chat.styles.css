@@ -1,0 +1,25 @@
+.chats {
+    display:grid;
+    grid-template-columns: 
+    40% 60%;
+    grid-template-areas: 
+    "contenedor-contactos" "contenedor-chat";
+}
+
+.contenedor-contactos {
+    background-color: rgb(46, 42, 42);
+    padding: 1rem;
+    grid-area: "contenedor-contactos";
+    color: white;
+}
+
+.contenedor-chat{
+    display: grid;
+    grid-area: "contenedor-chat";
+}
+
+.chat-vacio {
+    background-color: rgb(46, 42, 42);
+    color: white;
+    
+}
