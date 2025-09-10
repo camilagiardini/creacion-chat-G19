@@ -216,3 +216,33 @@ app.get('/usuarios', async function(req,res){
         console.log(error)
     }
 })
+
+app.get('/mostrarContactos', async function(req,res){
+    try {
+        const response = await realizarQuery(`
+
+        SELECT nombre, foto_perfil
+        FROM Users
+        WHERE Users.id_user=´${req.body.id_user}´
+        UNION ALL
+        SELECT nombre_chat, foto_chat
+        FROM Users
+        INNER JOIN Chats on Chats.id_chat = UserChats.id_chat
+        INNER JOIN Users on Users.id_user = UserChats.id_user
+        WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.body.id_user}'
+        
+    `)
+        console.log(response)
+        res.json(response)   
+    } catch (error) {
+        res.send("error obtener contactos")
+    }
+})
+
+app.post('/conseguirID', async function(req,res){
+    const response = await realizarQuery(`
+        SELECT id_user FROM Users WHERE email = '${req.body.email}'     
+    `)
+    console.log(response)
+    res.send(response) 
+})

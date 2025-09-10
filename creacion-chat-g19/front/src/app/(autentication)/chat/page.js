@@ -6,8 +6,26 @@ import Input from "../../../components/Input";
 import Title from "@/components/Title";
 import styles from "./chat.styles.css";
 import clsx from "clsx";
+import {useEffect, useState} from "react";
+import saveUser from "./LoginPage"
 
 export default function Chats(props) {
+    const [contacts, setContacts] = useState([]);
+    const [user, setUser] = useState("")
+
+    async function mostrarContactos(){
+        response = await fetch ('http://localhost:3000/mostrarContactos?id_user=${id}', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        const result = await response.json()
+        return result
+
+        saveUser()
+    }
+
     return(
         <>  
             <div className="chats">
