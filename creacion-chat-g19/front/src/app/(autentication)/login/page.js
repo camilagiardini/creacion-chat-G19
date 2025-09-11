@@ -35,7 +35,7 @@ export default function LoginPage() {
             if (usuarios[i].email === user && usuarios[i].contraseña === password) {
                 encontrado = true;
                 console.log("Login exitoso");
-                router.push("/chat");
+                router.push("/chat?id=${usuarios[i].id_user}");
                 break;
             }
         }
@@ -49,7 +49,6 @@ export default function LoginPage() {
     function saveUser(event){
         setUser(event.target.value)
     }
-
 
 
   return (

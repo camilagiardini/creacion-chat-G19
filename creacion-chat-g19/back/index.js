@@ -230,6 +230,17 @@ app.get('/mostrarContactos', async function(req,res){
         INNER JOIN Chats on Chats.id_chat = UserChats.id_chat
         INNER JOIN Users on Users.id_user = UserChats.id_user
         WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.body.id_user}'
+
+        SELECT Users.nombre, Users.foto_perfil
+        FROM Users
+        WHERE Users.id_user = ´${req.body.id_user}´
+
+        UNION ALL
+
+        SELECT Chats.nombre_chat, Chats.foto_chat
+        FROM Chats
+        INNER JOIN UsersChats ON UsersChats.id_chat = Chats.id_chat
+        WHERE Chats.tipo_chat = "grupo" AND UsersChats.id_user = ´${req.body.id_user}´;
         
     `)
         console.log(response)
