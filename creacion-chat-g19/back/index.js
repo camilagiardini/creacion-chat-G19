@@ -217,7 +217,7 @@ app.get('/usuarios', async function(req,res){
     }
 })
 
-app.get('/mostrarContactos', async function(req,res){
+app.post('/mostrarContactos', async function(req,res){
     try {
         const response = await realizarQuery(`
 

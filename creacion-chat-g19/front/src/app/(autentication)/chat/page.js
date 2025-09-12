@@ -11,9 +11,8 @@ import {useEffect, useState} from "react";
 export default function Chats(props) {
     const [contacts, setContacts] = useState([]);
     const [user, setUser] = useState("")
-
     async function mostrarContactos(){
-        response = await fetch (`http://localhost:3000/mostrarContactos?id_user=${id}`, {
+        response = await fetch (`http://localhost:3000/mostrarContactos?id_user=${id_user}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -22,6 +21,11 @@ export default function Chats(props) {
         const result = await response.json()
         return result
     }
+
+    useEffect(() => {
+        mostrarContactos()
+        console.log("cambio el estado")
+    }, [id_user]) 
 
     return(
         <>  
