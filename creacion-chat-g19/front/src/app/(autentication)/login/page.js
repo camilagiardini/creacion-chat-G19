@@ -12,6 +12,7 @@ import styles from "./login.styles.css"
 
 export default function LoginPage() {
     const [usuarios, setUsuarios] = useState([])
+    const [idUsuario, setIdUsuario] = useState(0)
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
@@ -29,11 +30,14 @@ export default function LoginPage() {
         })
     }, [])
 
+    setIdUsuario
+
     function singIn() {
         let encontrado = false;
         for (let i = 0; i < usuarios.length; i++) {
             if (usuarios[i].email === user && usuarios[i].contraseña === password) {
                 encontrado = true;
+                setIdUsuario(usuarios[i].id_user)
                 console.log("Login exitoso");
                 router.push(`/chat?id_user=${usuarios[i].id_user}`);
                 break;

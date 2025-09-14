@@ -217,36 +217,31 @@ app.get('/usuarios', async function(req,res){
     }
 })
 
-app.post('/mostrarContactos', async function(req,res){
+app.get('/mostrarContactos', async function(req,res){
+    console.log("ENTRO A MOSTRARCONTACTOS")
     try {
         const response = await realizarQuery(`
 
         SELECT nombre, foto_perfil
         FROM Users
-        WHERE Users.id_user=´${req.body.id_user}´
-        UNION ALL
-        SELECT nombre_chat, foto_chat
-        FROM Users
-        INNER JOIN Chats on Chats.id_chat = UserChats.id_chat
-        INNER JOIN Users on Users.id_user = UserChats.id_user
-        WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.body.id_user}'
-
-        SELECT Users.nombre, Users.foto_perfil
-        FROM Users
-        WHERE Users.id_user = ´${req.body.id_user}´
+        WHERE id_user != '${req.query.id_user}'
 
         UNION ALL
-
-        SELECT Chats.nombre_chat, Chats.foto_chat
-        FROM Chats
-        INNER JOIN UsersChats ON UsersChats.id_chat = Chats.id_chat
-        WHERE Chats.tipo_chat = "grupo" AND UsersChats.id_user = ´${req.body.id_user}´;
         
+        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat
+        FROM Chats
+        INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
+        INNER JOIN Users on Users.id_user = UsersChats.id_user
+        WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.query.id_user}'
+
     `)
+        console.log("funcionó")
         console.log(response)
         res.json(response)   
     } catch (error) {
-        res.send("error obtener contactos")
+        console.log("no funcionó")
+        console.error(error);
+        res.json("error obtener contactos");
     }
 })
 
