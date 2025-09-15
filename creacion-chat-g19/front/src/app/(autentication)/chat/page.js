@@ -4,21 +4,21 @@ import Button from "../../../components/Button";
 import Message from "../../../components/Message";
 import Input from "../../../components/Input";
 import Title from "@/components/Title";
-import styles from "./chat.styles.css";
 import clsx from "clsx";
 import {useEffect, useState} from "react";
 import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
-import { SearchParams } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import styles from "@/app/(autentication)/chat/page.module.css"
 
-export default function Chats(props) {
+export default function Chats() {
     const [contacts, setContacts] = useState([]);
     const [user, setUser] = useState("")
     const searchParams = useSearchParams();
     const id_user = searchParams.get("id_user"); // obtiene el id del usuario que inició sesión
 
     useEffect(() => {
-        fetch(`http://localhost:3000/mostrarContactos?id_user=${id_user}`)
+        console.log("entró")
+        fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
         .then(response => response.json())
         .then(result => {
             setContacts(result)
@@ -29,12 +29,17 @@ export default function Chats(props) {
     return(
         <>  
             <div className="chats">
-                <div className="contenedor-contactos">
-                    <Title title="Chats"></Title>
-                    <Contact></Contact>
+                <div className={styles.contenedorcontactos}>
+                    <Title title="Chats" className="titulo"></Title>
+                    {
+                        contacts.length!=0 &&
+                        contacts.map(element => (
+                            <Contact foto_perfil={element.foto_perfil} nombreContacto={element.nombre} className={styles.Contact}></Contact>
+                        ))
+                    }
                 </div>
-                <div className="contenedor-chat">
-                    <p>acá aparece el chat</p>
+                    <p>chat individual</p>
+                <div className="contenedorchat">
                 </div>
             </div>
 

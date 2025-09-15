@@ -3,22 +3,21 @@
     grid-template-columns: 
     40% 60%;
     grid-template-areas: 
-    "contenedor-contactos" "contenedor-chat";
+    "contenedorcontactos" "contenedorchat";
 }
 
-.contenedor-contactos {
-    background-color: rgb(46, 42, 42);
+.contenedorcontactos {
     padding: 1rem;
-    grid-area: "contenedor-contactos";
+    grid-area: "contenedorcontactos";
     color: white;
 }
 
-.contenedor-chat{
+.contenedorchat{
     display: grid;
-    grid-area: "contenedor-chat";
+    grid-area: "contenedorchat";
 }
 
-.chat-vacio {
+.chatvacio {
     background-color: rgb(46, 42, 42);
     color: white;
     
