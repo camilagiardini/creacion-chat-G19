@@ -18,7 +18,7 @@ export default function Chats(props) {
     const id_user = searchParams.get("id_user"); // obtiene el id del usuario que inició sesión
 
     useEffect(() => {
-        fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
+        fetch(`http://localhost:3000/mostrarContactos?id_user=${id_user}`)
         .then(response => response.json())
         .then(result => {
             setContacts(result)
