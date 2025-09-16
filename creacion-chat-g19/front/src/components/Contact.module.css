@@ -1,7 +1,15 @@
 .nombrecontacto {
     color: white;
+    font-size:20px;
 }
 
 .contactoindividual {
-    background-color: rgb(18, 18, 18);
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+    padding: 0.5rem;
+}
+
+.contactoindividual img {
+    height: 20px;
 }

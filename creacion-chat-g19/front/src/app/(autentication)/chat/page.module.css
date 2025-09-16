@@ -3,7 +3,8 @@
     grid-template-columns: 
     40% 60%;
     grid-template-areas: 
-    "contenedorcontactos" "contenedorchat";
+    "contenedorcontactos contenedorchatindividual";
+    background-color: black;
 }
 
 .contenedorcontactos {
@@ -12,13 +13,12 @@
     color: white;
 }
 
-.contenedorchat{
+.contenedorchatindividual{
     display: grid;
-    grid-area: "contenedorchat";
+    grid-area: "contenedorchatindividual";
 }
 
 .chatvacio {
     background-color: rgb(46, 42, 42);
     color: white;
-    
 }

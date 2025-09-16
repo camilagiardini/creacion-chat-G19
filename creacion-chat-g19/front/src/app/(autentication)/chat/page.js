@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation";
 import styles from "@/app/(autentication)/chat/page.module.css"
 
+
 export default function Chats() {
     const [contacts, setContacts] = useState([]);
     const [user, setUser] = useState("")
@@ -28,7 +29,7 @@ export default function Chats() {
 
     return(
         <>  
-            <div className="chats">
+            <div className={styles.chats}>
                 <div className={styles.contenedorcontactos}>
                     <Title title="Chats" className="titulo"></Title>
                     {
@@ -38,8 +39,9 @@ export default function Chats() {
                         ))
                     }
                 </div>
+                    
+                <div className="contenedorchatindividual">
                     <p>chat individual</p>
-                <div className="contenedorchat">
                 </div>
             </div>
 
