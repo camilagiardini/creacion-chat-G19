@@ -5,7 +5,7 @@ export default function Contact(props){
     return (
         <>
             <div className={styles.contactoindividual}>
-                <img src={props.foto_perfil}></img>
+                <img src={`/images/${props.foto_perfil}`}></img>
                 <h1 className={styles.nombrecontacto}>{props.nombreContacto}</h1>
             </div>
         </>
