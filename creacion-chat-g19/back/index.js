@@ -252,3 +252,14 @@ app.post('/conseguirID', async function(req,res){
     console.log(response)
     res.send(response) 
 })
+
+app.post('/seleccionarChat', async function (req,res){
+    const response = await realizarQuery(`
+        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat FROM Chats 
+        INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
+        INNER JOIN Users on Users.id_user = UsersChats.id_user
+        WHERE Users.id_user = '${req.body.id_user}';
+    `)
+    res.send(response)
+    
+})

@@ -11,15 +11,11 @@
     padding: 1rem;
     grid-area: "contenedorcontactos";
     color: white;
+    min-height: 100%;
 }
 
 .contenedorchatindividual{
     display: grid;
     grid-area: "contenedorchatindividual";
+    min-height: 100%;
 }
-
-.chatvacio {
-    background-color: rgb(46, 42, 42);
-    color: white;
-}
-

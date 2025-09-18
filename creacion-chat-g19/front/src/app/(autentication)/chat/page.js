@@ -13,7 +13,7 @@ import styles from "@/app/(autentication)/chat/page.module.css"
 
 export default function Chats() {
     const [contacts, setContacts] = useState([]);
-    const [user, setUser] = useState("")
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(0)
     const searchParams = useSearchParams();
     const id_user = searchParams.get("id_user"); // obtiene el id del usuario que inició sesión
 
@@ -25,7 +25,18 @@ export default function Chats() {
             setContacts(result)
         }) // .then es la forma para comunicarte con elback
 
-    }, [id_user]) 
+    }, [id_user])
+
+async function mostrarChat(id_user) {
+        const response = await fetch(`http://localhost:4000/seleccionarChat`, {
+            method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({id_user:id_user})
+        })
+        .then(response => response.json())
+    }
 
     return(
         <>  
@@ -35,7 +46,7 @@ export default function Chats() {
                     {
                         contacts.length!=0 &&
                         contacts.map(element => (
-                            <Contact foto_perfil={element.foto_perfil} nombreContacto={element.nombre} className={styles.Contact}></Contact>
+                            <Contact foto_perfil={element.foto_perfil} nombreContacto={element.nombre} onClick={mostrarChat()} className={styles.Contact}></Contact>
                         ))
                     }
                 </div>
