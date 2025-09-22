@@ -207,6 +207,7 @@ app.delete('/eliminarCanciones', async function (req,res) {
 
 app.get('/usuarios', async function(req,res){
     try {
+        console.log("Entre")
         const response = await realizarQuery(`
             SELECT * FROM Users    
         `)
@@ -217,8 +218,8 @@ app.get('/usuarios', async function(req,res){
     }
 })
 
+
 app.get('/mostrarContactos', async function(req,res){
-    console.log("ENTRO A MOSTRARCONTACTOS")
     try {
         const response = await realizarQuery(`
 
@@ -234,14 +235,13 @@ app.get('/mostrarContactos', async function(req,res){
         INNER JOIN Users on Users.id_user = UsersChats.id_user
         WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.query.id_user}'
 
-    `)
+        `)
         console.log("funcionó")
         console.log(response)
-        res.json(response)   
+        res.send(response)   
     } catch (error) {
-        console.log("no funcionó")
         console.error(error);
-        res.json("error obtener contactos");
+        res.send("error obtener contactos");
     }
 })
 
@@ -261,5 +261,4 @@ app.post('/seleccionarChat', async function (req,res){
         WHERE Users.id_user = '${req.body.id_user}';
     `)
     res.send(response)
-    
 })

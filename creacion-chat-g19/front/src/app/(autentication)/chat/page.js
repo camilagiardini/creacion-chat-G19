@@ -13,7 +13,7 @@ import styles from "@/app/(autentication)/chat/page.module.css"
 
 export default function Chats() {
     const [contacts, setContacts] = useState([]);
-    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(0)
+    const [chatSeleccionado, setChatSeleccionado] = useState(0)
     const searchParams = useSearchParams();
     const id_user = searchParams.get("id_user"); // obtiene el id del usuario que inició sesión
 
@@ -27,8 +27,9 @@ export default function Chats() {
 
     }, [id_user])
 
-async function mostrarChat(id_user) {
-        const response = await fetch(`http://localhost:4000/seleccionarChat`, {
+function mostrarChat(id_user) {
+    console.log("hola")
+        fetch(`http://localhost:4000/seleccionarChat?id_user=${id_user}`, {
             method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -41,7 +42,7 @@ async function mostrarChat(id_user) {
     return(
         <>  
             <div className={styles.chats}>
-                <div className={styles.contenedorcontactos}>
+                <div className={styles.contenedorcontactos} onClick={mostrarChat}>
                     <Title title="Chats" className="titulo"></Title>
                     {
                         contacts.length!=0 &&
