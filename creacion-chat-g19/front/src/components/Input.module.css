@@ -1,0 +1,15 @@
+.inputRegister{
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #b0bec5;
+    font-size: 1rem;
+    background: #fafdff;
+    transition: border 0.2s;
+    color: black;
+}
+
+.inputRegister:focus{
+    border: 1.5px solid #1976d2;
+    outline: none;
+    background: #e3eafc;
+}
