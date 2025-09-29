@@ -223,13 +223,13 @@ app.get('/mostrarContactos', async function(req,res){
     try {
         const response = await realizarQuery(`
 
-        SELECT nombre, foto_perfil
+        SELECT nombre, foto_perfil, id_user
         FROM Users
         WHERE id_user != '${req.query.id_user}'
 
         UNION ALL
         
-        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat
+        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat, Chats.id_chat
         FROM Chats
         INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
         INNER JOIN Users on Users.id_user = UsersChats.id_user
@@ -255,10 +255,11 @@ app.post('/conseguirID', async function(req,res){
 
 app.post('/seleccionarChat', async function (req,res){
     const response = await realizarQuery(`
-        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat FROM Chats 
+        SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat, Chats.id_chat FROM Chats 
         INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
         INNER JOIN Users on Users.id_user = UsersChats.id_user
-        WHERE Users.id_user = '${req.body.id_user}';
+        WHERE Users.id_user = '${req.body.id_user}' AND Chats.id_chat='${req.body.id_chat}';
     `)
+    console.log(response)
     res.send(response)
 })

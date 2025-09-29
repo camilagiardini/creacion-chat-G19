@@ -21,13 +21,13 @@ export default function Chats() {
     }, [])
 
   useEffect(() => {
-    console.log("entró");
     fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
       .then((response) => response.json())
       .then((result) => {
         setContacts(result);
       }); // .then es la forma para comunicarte con elback
   }, [id_user]);
+
 
   function mostrarChat() {
     console.log(id_user);
@@ -36,7 +36,9 @@ export default function Chats() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({id_user}),
+      body: JSON.stringify({
+        id_user_log: id_user
+      }),
     }).then(
         (response) => response.json())
         .then(
@@ -56,6 +58,7 @@ export default function Chats() {
                 key={i}
                 foto_perfil={element.foto_perfil}
                 nombreContacto={element.nombre}
+                id_user={element.id_user}
                 onClick={mostrarChat}
                 className={styles.Contact}
               ></Contact>
