@@ -53,16 +53,17 @@ export default function Chats() {
         <div className={styles.contenedorcontactos}>
           <Title title="Chats" className="titulo"></Title>
           {contacts.length != 0 &&
-            contacts.map((element,i) => (
-              <Contact
+            contacts.map((element,i) => {
+              console.log(contacts)
+              return (<Contact
                 key={i}
                 foto_perfil={element.foto_perfil}
                 nombreContacto={element.nombre}
                 id_user={element.id_user}
                 onClick={mostrarChat}
                 className={styles.Contact}
-              ></Contact>
-            ))}
+              ></Contact>)
+          })}
         </div>
 
         <div className="contenedorchatindividual">

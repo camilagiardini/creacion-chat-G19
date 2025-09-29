@@ -222,20 +222,43 @@ app.get('/usuarios', async function(req,res){
 app.get('/mostrarContactos', async function(req,res){
     try {
         const response = await realizarQuery(`
+            SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat, Chats.id_chat
+            FROM Chats
+            INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
+            INNER JOIN Users on Users.id_user = UsersChats.id_user
+            WHERE Users.id_user='${req.query.id_user}'
+        `)
 
-        SELECT nombre, foto_perfil, id_user
+        if (tipo_chat=="privado") {
+            await realizarQuery(`SELECT *
+            FROM Users
+            INNER JOIN UsersChats on UsersChats.id_user=Users.id_user
+            INNER JOIN Chats on Chats.id_chat = Chats.id_chat
+            WHERE Users.id_user!='${req.body.id_user}'`)
+        } else {
+            `SELECT *
+            FROM Users
+            WHERE Users.id_user!='${req.query.id_user}'`
+        }
+        
+        /*  SELECT *
         FROM Users
-        WHERE id_user != '${req.query.id_user}'
+        INNER JOIN UsersChats on UsersChats.id_user=Users.id_user
+        INNER JOIN Chats on Chats.id_chat = Chats.id_chat
+        WHERE Users.id_user!='${req.body.id_user}'*/
+
+        /* SELECT nombre, foto_perfil, Users.id_user, UsersChats.id_chat
+        FROM Users
+        INNER JOIN UsersChats ON UsersChats.id_user = Users.id_user
+        WHERE  Users.id_user != 3
 
         UNION ALL
-        
         SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat, Chats.id_chat
         FROM Chats
-        INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
-        INNER JOIN Users on Users.id_user = UsersChats.id_user
-        WHERE Chats.tipo_chat="grupo" AND Users.id_user='${req.query.id_user}'
+        INNER JOIN UsersChats ON UsersChats.id_chat = Chats.id_chat
+        INNER JOIN Users ON Users.id_user = UsersChats.id_user
+        WHERE Chats.tipo_chat = 'grupo' AND Users.id_user = 3;*/
 
-        `)
         console.log("funcionó")
         console.log(response)
         res.send(response)   
@@ -250,7 +273,7 @@ app.post('/conseguirID', async function(req,res){
         SELECT id_user FROM Users WHERE email = '${req.body.email}'     
     `)
     console.log(response)
-    res.send(response) 
+    res.send(response)
 })
 
 app.post('/seleccionarChat', async function (req,res){
