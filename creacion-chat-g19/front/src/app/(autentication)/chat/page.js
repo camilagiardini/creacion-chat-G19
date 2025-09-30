@@ -12,7 +12,7 @@ import styles from "@/app/(autentication)/chat/page.module.css";
 
 export default function Chats() {
   const [contacts, setContacts] = useState([]);
-  const [chatSeleccionado, setChatSeleccionado] = useState(0);
+  const [id_chat, setIdChat] = useState(0);
   const [id_user, setIdUser] = useState(0);
   const searchParams = useSearchParams();
 
@@ -28,9 +28,10 @@ export default function Chats() {
       }); // .then es la forma para comunicarte con elback
   }, [id_user]);
 
-
-  function mostrarChat(id_contacto) {
+  function mostrarChat(id_chat) {
+    setIdChat(id_chat);
     console.log(id_user);
+    console.log("id chat:", id_chat);
     fetch(`http://localhost:4000/seleccionarChat`, {
       method: "POST",
       headers: {
@@ -38,7 +39,7 @@ export default function Chats() {
       },
       body: JSON.stringify({
         id_user: id_user,
-        id_contacto: id_contacto
+        id_chat: id_chat
       }),
     }).then(
         (response) => response.json())
@@ -55,13 +56,13 @@ export default function Chats() {
           <Title title="Chats" className="titulo"></Title>
           {contacts.length != 0 &&
             contacts.map((element,i) => {
-              console.log(contacts)
+              console.log(element)
               return (<Contact
                 key={i}
-                foto_perfil={element.foto_perfil}
-                nombreContacto={element.nombre}
+                foto_chat={element.foto_chat}
+                nombreContacto={element.nombre_chat}
                 id_user={element.id_user}
-                onClick={() => mostrarChat(element.id_user)}
+                onClick={() => mostrarChat(element.id_chat)}
                 className={styles.Contact}
               ></Contact>)
           })}

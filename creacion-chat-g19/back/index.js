@@ -221,7 +221,7 @@ app.get('/usuarios', async function(req,res){
 
 app.get('/mostrarContactos', async function(req,res){
     try {
-        const response = await realizarQuery(`
+        const response = await realizarQuery(/*`
             SELECT DISTINCT Users.nombre, Users.foto_perfil, Users.id_user
             FROM Users
             INNER JOIN UsersChats on UsersChats.id_user = Users.id_user
@@ -234,7 +234,21 @@ app.get('/mostrarContactos', async function(req,res){
             INNER JOIN UsersChats ON UsersChats.id_chat = Chats.id_chat
             INNER JOIN Users ON Users.id_user = UsersChats.id_user
             WHERE Chats.tipo_chat = 'grupo' AND Users.id_user = '${req.query.id_user}';
-        `)
+
+
+        `*/
+            `SELECT DISTINCT c.id_chat, CASE 
+            WHEN c.tipo_chat = 'grupo' THEN c.nombre_chat
+            ELSE u2.nombre 
+            END AS nombre_chat
+            FROM UsersChats uc
+            JOIN Chats c ON uc.id_chat = c.id_chat
+            LEFT JOIN UsersChats uc2 ON uc2.id_chat = c.id_chat AND uc2.id_user != uc.id_user
+            LEFT JOIN Users u2 ON uc2.id_user = u2.id_user
+            WHERE uc.id_user = '${req.query.id_user}';`
+        )
+
+
         console.log(response)
         console.log("funcionó")
         res.send(response)   
@@ -253,19 +267,43 @@ app.post('/conseguirID', async function(req,res){
 })
 
 app.post('/seleccionarChat', async function (req,res){
+    console.log("mostrar chat seleccionado")
     try {
-        const response = await realizarQuery(`
+        /*const response = await realizarQuery(`
             SELECT DISTINCT Chats.nombre_chat, Chats.foto_chat, Chats.id_chat, Chats.tipo_chat
             FROM Chats
             INNER JOIN UsersChats on UsersChats.id_chat = Chats.id_chat
             INNER JOIN Users on Users.id_user = UsersChats.id_user
-            WHERE Users.id_user='${req.body.id_user}'
+            WHERE Chats.id_chat='${req.body.id_chat}'
+        `)*/
+        const response = await realizarQuery(`
+            SELECT DISTINCT
+            CASE
+                WHEN Chats.tipo_chat = 'privado' THEN (
+                SELECT Users.nombre
+                FROM Users
+                INNER JOIN UsersChats UC2 ON Users.id_user = UC2.id_user
+                WHERE UC2.id_chat = Chats.id_chat
+                    AND Users.id_user <> ${req.body.id_user}
+                LIMIT 1
+                )
+                ELSE Chats.nombre_chat
+            END AS nombre_chat,
+            Chats.foto_chat,
+            Chats.id_chat,
+            Chats.tipo_chat
+            FROM Chats
+            INNER JOIN UsersChats ON UsersChats.id_chat = Chats.id_chat
+            INNER JOIN Users ON Users.id_user = UsersChats.id_user
+            WHERE Chats.id_chat = '${req.body.id_chat}'
         `)
+        console.log("id user:")
         console.log(req.body.id_user)
+        console.log(req.body.id_chat)
         console.log("respuesta")
         console.log(response)
 
-        for (let i = 0; i < response.length; i++) {
+        /*for (let i = 0; i < response.length; i++) {
             const chat = response[i];
             let segundaConsulta;
             if (chat.tipo_chat == "privado") {
@@ -287,7 +325,7 @@ app.post('/seleccionarChat', async function (req,res){
                     WHERE UsersChats.id_chat = '${chat.id_chat}' AND Users.id_user!='${req.body.id_user}'
                 `);
             }
-        }
+        }*/
 
         console.log("funcionó")
         console.log(response)
