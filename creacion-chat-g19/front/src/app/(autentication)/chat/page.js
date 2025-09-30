@@ -29,7 +29,7 @@ export default function Chats() {
   }, [id_user]);
 
 
-  function mostrarChat() {
+  function mostrarChat(id_contacto) {
     console.log(id_user);
     fetch(`http://localhost:4000/seleccionarChat`, {
       method: "POST",
@@ -37,7 +37,8 @@ export default function Chats() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id_user_log: id_user
+        id_user: id_user,
+        id_contacto: id_contacto
       }),
     }).then(
         (response) => response.json())
@@ -60,7 +61,7 @@ export default function Chats() {
                 foto_perfil={element.foto_perfil}
                 nombreContacto={element.nombre}
                 id_user={element.id_user}
-                onClick={mostrarChat}
+                onClick={() => mostrarChat(element.id_user)}
                 className={styles.Contact}
               ></Contact>)
           })}
