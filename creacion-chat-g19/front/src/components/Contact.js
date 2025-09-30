@@ -1,12 +1,13 @@
 "use client"
+import styles from "./Contact.module.css"
 
 export default function Contact(props){
     return (
         <>
-            <img src={props.foto_perfil}></img>
-            <h1>{props.nombreContacto}</h1>
-            <p>{props.numeroTelefono}</p>
-            <p>{props.descripcion}</p>
+            <div className={styles.contactoindividual} onClick={props.onClick}>
+                <img src={`/images/${props.foto_perfil}`}></img>
+                <h1 className={styles.nombrecontacto}>{props.nombreContacto}</h1>
+            </div>
         </>
             
     )

@@ -1,0 +1,21 @@
+.chats {
+    display:grid;
+    grid-template-columns: 
+    40% 60%;
+    grid-template-areas: 
+    "contenedorcontactos contenedorchatindividual";
+    background-color: black;
+}
+
+.contenedorcontactos {
+    padding: 1rem;
+    grid-area: "contenedorcontactos";
+    color: white;
+    min-height: 100%;
+}
+
+.contenedorchatindividual{
+    display: grid;
+    grid-area: "contenedorchatindividual";
+    min-height: 100%;
+}
