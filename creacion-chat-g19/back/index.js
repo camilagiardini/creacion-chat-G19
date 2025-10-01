@@ -335,3 +335,15 @@ app.post('/seleccionarChat', async function (req,res){
         res.send("error obtener contactos");
     }
 })
+
+app.post('/obtenerMensajes', async function (req,res){
+    try {
+        const response = await realizarQuery(`
+            SELECT * FROM Messages WHERE id_chat = '${req.body.id_chat}'    
+        `);
+        res.send(response);
+    } catch (error) {
+        console.error(error);
+        res.send("error al obtener mensajes");
+    }
+});

@@ -12,13 +12,20 @@ import styles from "@/app/(autentication)/chat/page.module.css";
 
 export default function Chats() {
   const [contacts, setContacts] = useState([]);
-  const [id_chat, setIdChat] = useState(0);
+  const [idChat, setIdChat] = useState(0);
   const [id_user, setIdUser] = useState(0);
+  const [mensajes, setMensajes] = useState([]);
   const searchParams = useSearchParams();
 
-    useEffect(() => {
-        setIdUser(searchParams.get("id_user"))
-    }, [])
+  useEffect(() => {
+      setIdUser(searchParams.get("id_user"))
+  }, [])
+
+  useEffect(() => {
+    if (idChat) {
+      console.log("idChat actualizado:", idChat);
+    }
+  }, [idChat]);
 
   useEffect(() => {
     fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
@@ -28,25 +35,48 @@ export default function Chats() {
       }); // .then es la forma para comunicarte con elback
   }, [id_user]);
 
-  function mostrarChat(id_chat) {
-    setIdChat(id_chat);
-    console.log(id_user);
-    console.log("id chat:", id_chat);
-    fetch(`http://localhost:4000/seleccionarChat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id_user: id_user,
-        id_chat: id_chat
-      }),
-    }).then(
-        (response) => response.json())
-        .then(
-            (response) => console.log(response)
-        )
-    ;
+    function mostrarChat(id_chat) {
+      console.log(id_user);
+      console.log("id chat:", id_chat);
+      fetch(`http://localhost:4000/seleccionarChat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_user: id_user,
+          id_chat: id_chat
+        }),
+      })
+        .then((response) => response.json())
+        .then((id_chat) => {
+          setIdChat(id_chat);
+          return id_chat;
+        })
+        .then((id_chat) =>{
+          console.log("funcion traerMensajes");
+          traerMensajes(id_chat);
+        });
+    }
+
+    function traerMensajes(id_chat) {
+      if (id_chat == 0) {
+        console.log("No hay chat seleccionado");
+      }
+      fetch(`http://localhost:4000/obtenerMensajes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_user: id_user,
+          id_chat: id_chat
+        }),
+      })
+      .then((response) => response.json())
+      .then((result) => {
+        setMensajes(result);
+      });
   }
 
   return (
@@ -56,7 +86,6 @@ export default function Chats() {
           <Title title="Chats" className="titulo"></Title>
           {contacts.length != 0 &&
             contacts.map((element,i) => {
-              console.log(element)
               return (<Contact
                 key={i}
                 foto_chat={element.foto_chat}
