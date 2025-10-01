@@ -1,11 +1,10 @@
 "use client"
+import styles from "./Message.module.css"
 
 export default function Message(props) {
     return(
         <>
-            <p>{props.textoMensaje}</p>
-            <p>{props.hora}</p>
+            <p className={styles.textomensaje}>{props.textoMensaje}</p>
         </>
     )
-   
 }

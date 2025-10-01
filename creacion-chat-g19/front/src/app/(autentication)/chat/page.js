@@ -14,6 +14,7 @@ export default function Chats() {
   const [contacts, setContacts] = useState([]);
   const [idChat, setIdChat] = useState(0);
   const [id_user, setIdUser] = useState(0);
+  const [chatSeleccionado, setChatSeleccionado] = useState([]);
   const [mensajes, setMensajes] = useState([]);
   const searchParams = useSearchParams();
 
@@ -25,7 +26,7 @@ export default function Chats() {
     if (idChat) {
       console.log("idChat actualizado:", idChat);
     }
-  }, [idChat]);
+  }, [idChat]); //useEffect para cuando cambia idChat (diferente a la variable id_chat)
 
   useEffect(() => {
     fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
@@ -49,8 +50,10 @@ export default function Chats() {
         }),
       })
         .then((response) => response.json())
-        .then((id_chat) => {
+        .then(() => {
           setIdChat(id_chat);
+          console.log("Chat seleccionado:", id_chat);
+          console.log("estado: ", idChat);
           return id_chat;
         })
         .then((id_chat) =>{
@@ -60,6 +63,7 @@ export default function Chats() {
     }
 
     function traerMensajes(id_chat) {
+      console.log("entro a traer mensajes");
       if (id_chat == 0) {
         console.log("No hay chat seleccionado");
       }
@@ -74,9 +78,11 @@ export default function Chats() {
         }),
       })
       .then((response) => response.json())
-      .then((result) => {
-        setMensajes(result);
-      });
+      .then((response) => {
+        setMensajes(response);
+        return response;
+      })
+      .then((mensajes)=> console.log(mensajes))
   }
 
   return (
@@ -99,6 +105,16 @@ export default function Chats() {
 
         <div className="contenedorchatindividual">
           <p>chat individual</p>
+          {mensajes.length != 0 &&
+            mensajes.map((element,i) => {
+              return (<Message
+                key={i}
+                textoMensaje={element.content}
+                id_messages={element.id_messages}
+                className={styles.Message}
+              ></Message>)
+            })
+          }
         </div>
       </div>
     </>
