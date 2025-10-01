@@ -89,7 +89,7 @@ export default function Chats() {
     <>
       <div className={styles.chats}>
         <div className={styles.contenedorcontactos}>
-          <Title title="Chats" className="titulo"></Title>
+        <Title title="Chats" className={styles.tituloChat}></Title>
           {contacts.length != 0 &&
             contacts.map((element,i) => {
               return (<Contact
@@ -103,7 +103,7 @@ export default function Chats() {
           })}
         </div>
 
-        <div className="contenedorchatindividual">
+        <div className={styles.contenedorchatindividual}>
           <p>chat individual</p>
           {mensajes.length != 0 &&
             mensajes.map((element,i) => {

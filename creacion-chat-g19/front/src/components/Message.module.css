@@ -1,3 +1,4 @@
-.textomensaje {
-    color: red;
+.message {
+    color: black;
+    display: flex;
 }
