@@ -22,186 +22,6 @@ app.listen(port, function () {
     console.log(`Server running in http://localhost:${port}`);
 });
 
-// ACA EMPIEZA EL TRABAJO NUESTRO
-
-/*app.post('/obtenerDatosRegistro'), async function (req,res) {
-    try {
-         await realizarQuery(`
-        ('INSERT INTO Usuarios (nombre_usuario, contraseña, es_admin) VALUES ('${req.body.nombre_usuario}', '${req.body.contraseña}', '${req.body.es_admin}');')
-    `)
-    res.send("se agrego correctamente")
-    } catch(error){
-        console.log(error);
-    }
-
-}*/
-/*
-app.post('/guardarUsuarios', async function (req,res) {
-    try {
-        await realizarQuery(`
-        INSERT INTO Usuarios (nombre_usuario,contraseña, es_admin) 
-            VALUES ('${req.body.nombre_usuario}', '${req.body.contraseña}', ${req.body.es_admin})
-        `)
-        res.send({mensaje:"se agrego correctamente"})
-
-    } catch(error){
-        console.log(error);
-        res.send(error)
-    }
-
-})
-
-app.post('/guardarCanciones', async function (req,res) {
-    try {
-        await realizarQuery(`
-        INSERT INTO Canciones (nombre_cancion, nombre_artista, nro_reproducciones) 
-            VALUES ('${req.body.nombre_cancion}','${req.body.nombre_artista}', '${req.body.nro_reproducciones}')
-        `)
-        res.send({mensaje: "se agrego correctamente"})
-    } catch(error){
-        console.log(error);
-        res.send(error)
-/*
-    } catch(error){
-        console.log(error);
-        res.send(error)
-    }
-
-})
-
-app.post('/guardarCanciones', async function (req,res) {
-    try {
-        await realizarQuery(`
-        INSERT INTO Canciones (nombre_cancion, nombre_artista, nro_reproducciones) 
-            VALUES ('${req.body.nombre_cancion}','${req.body.nombre_artista}', '${req.body.nro_reproducciones}')
-        `)
-        res.send({mensaje: "se agrego correctamente"})
-    } catch(error){
-        console.log(error);
-        res.send(error)
-
-    }
-
-})
-
-app.post('/buscarUsuario', async function(req,res){
-    console.log(req.query.nombre_usuario)
-    try {
-        const response = await realizarQuery(`
-            SELECT * FROM Usuarios WHERE nombre_usuario = '${req.body.nombre_usuario}' and contraseña = '${req.body.contraseña}'     
-        `)
-        console.log(response)
-        res.send(response)
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-
-app.post('/conseguirID', async function(req,res){
-    const response = await realizarQuery(`
-        SELECT idUsuario FROM Usuarios WHERE nombre_usuario = '${req.body.nombre_usuario}'     
-    `)
-    console.log(response)
-    res.send(response) 
-})
-
-
-app.post('/esAdmin', async function(req,res){
-    try {
-        const response = await realizarQuery(`
-            SELECT es_admin FROM Usuarios WHERE nombre_usuario = '${req.body.nombre_usuario}'     
-        `)
-        console.log(response)
-        res.send(response)
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-
-app.get('/usuarios', async function(req,res){
-    const response = await realizarQuery(`
-        SELECT * FROM Usuarios   
-    `)
-    console.log(response)
-    res.send(response)
-})
-
-app.get('/cancionesJuego', async function(req,res){
-    try {
-        const response = await realizarQuery(`
-        SELECT * FROM Canciones ORDER BY RAND()   
-    `)
-        console.log(response)
-        res.json(response)   
-    } catch (error) {
-        res.send("error obtener canciones")
-    }
-})
-
-app.get('/traerCanciones', async function(req,res){
-    try {
-        const response = await realizarQuery(`
-        SELECT * FROM Canciones  
-    `)
-        console.log(response)
-        res.json(response)   
-    } catch (error) {
-        res.send("error obtener canciones")
-    }
-})
-
-
-app.get('/mejoresPuntajes', async function (req,res) {
-    try {
-        const response = await realizarQuery(`
-        SELECT nombre_usuario, puntaje FROM Usuarios ORDER BY puntaje DESC LIMIT 5
-    `)
-        res.send(response)
-    } catch (error) {
-        res.send("error al ordenar los puntajes")
-    }
-})
-
-app.post('/agregarPuntaje', async function (req,res) {
-    try {
-        const response = await realizarQuery(`
-        SELECT * FROM Usuarios WHERE idUsuario = '${req.body.idUsuario}'')
-    `)
-        if (response.length<0){
-            await realizarQuery(`
-            INSERT INTO Usuarios (nombre_usuario, contraseña, es_admin, puntaje) VALUES ('${req.body.nombre_usuario}','${req.body.contraseña}', '${req.body.es_admin}', '${req.body.contadorPuntaje}')
-            `)
-        } else {
-            await realizarQuery(`
-            UPDATE Usuarios SET puntaje = '${req.body.contadorPuntaje}' WHERE idUsuario='${req.body.idUsuario}')
-            `)
-        }
-        res.send("se agregó el puntaje correctamente")
-    } catch (error) {
-        res.send("error al agregar el puntaje")
-    }
-})
-
-app.put('/modificarCanciones', async function (req, res) {
-    try {
-        const result = await realizarQuery(`UPDATE Canciones SET ${req.body.campo}='${req.body.nuevoValor}' WHERE nombre_cancion = '${req.body.cancionSeleccionada}'`);
-        res.json(result);
-    } catch (error) {
-        res.json("error al modificar la canción")
-    }
-})
-
-app.delete('/eliminarCanciones', async function (req,res) {
-    try {
-        const result= await realizarQuery(`DELETE FROM Canciones WHERE nombre_cancion="${req.body.cancionSeleccionadaDelete}"`)
-        res.json(result)
-    } catch (error) {
-        
-    }
-})*/
-
 // -------------- aca comienza el proyecto del chat
 
 
@@ -218,6 +38,20 @@ app.get('/usuarios', async function(req,res){
     }
 })
 
+app.post('/encontrarUsuario', async function(req,res){
+    try {
+        const response = await realizarQuery(`
+            SELECT * FROM Users WHERE email = '${req.body.email}'    
+        `)
+        if (response.length > 0) {
+            res.send({existe: true, vector: response})
+        } else {
+            res.send({existe: false, vector: response})
+        }        
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 app.get('/mostrarContactos', async function(req,res){
     try {
@@ -262,7 +96,6 @@ app.post('/conseguirID', async function(req,res){
     const response = await realizarQuery(`
         SELECT id_user FROM Users WHERE email = '${req.body.email}'     
     `)
-    console.log(response)
     res.send(response)
 })
 
@@ -347,3 +180,21 @@ app.post('/obtenerMensajes', async function (req,res){
         res.send("error al obtener mensajes");
     }
 });
+
+app.post('/register', async function (req, res) {
+    console.log(req.body)
+    try {
+        if (req.body.foto_perfil == null) {
+            req.body.foto_perfil = null
+        } else {
+            req.body.foto_perfil = `'${req.body.foto_perfil}'`
+        }
+        const respuesta = await realizarQuery(`
+            INSERT INTO Users (nombre, email, contraseña, foto_perfil, online)    
+            VALUES ('${req.body.nombre}', '${req.body.email}', '${req.body.password}', ${req.body.foto_perfil}, ${req.body.online})
+        `)
+        res.send({res: true, message: "Usuario Creado Correctamente"})
+    } catch (error) {
+        console.log(error)
+    }
+})

@@ -8,49 +8,91 @@ import { useRouter } from "next/navigation"
 import styles from "@/app/(autentication)/register/register.module.css"
 
 export default function RegisterPage() {
-    const [usuarios, setUsuarios] = useState([])
+    const [usuario, setUsuario] = useState([])
     const [email, setEmail] = useState("")
     const [nombre, setNombre] = useState("")
     const [password, setPassword] = useState("")
+    const [passwordConfirm, setPasswordConfirm] = useState("")
     const [foto, setFoto] = useState("")
-    const [error, setError] = useState("")
     const router = useRouter()
 
-    
+    useEffect(() => {
+        if (usuario.existe == false) {
+            signUp()
+        } else if (usuario.existe == true) {
+            console.log("Error - Ya existe un usuario con ese mail")
+        }
+    }, [usuario])
 
-    // async function singUp(e) {
-    //     e.preventDefault()
-    //     const nuevoUsuario = {
-    //         email: email,
-    //         password: password
-    //     }
 
-    //     const existe = usuarios.some(u => u.email === nuevoUsuario.email)
+    function exists() {
 
-    //     if (existe) {
-    //         setError("Ese correo ya está registrado")
-    //         return
-    //     }
+        if (!nombre || !email || !password) {
+            console.log("Error Complete todos los campos por favor")
+            return
+        }
 
-    //     try {
-    //         const response = await fetch("http://localhost:4006/usuarios", {
-    //             method: "POST",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify(nuevoUsuario)
-    //         })
-
-    //         if (response.ok) {
-    //             router.push("/login")
-    //         } else {
-    //             setError("Error al crear el usuario")
-    //         }
-    //     } catch (error) {
-    //         setError("Hubo un problema con el registro")
-    //     }
-    // }
-    function signUp() {
-        console.log("hola")
+        fetch("http://localhost:4000/encontrarUsuario", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({email: email})
+        })
+        .then(response => response.json())
+        .then(result => {
+            setUsuario(result)
+        })
     }
+
+
+
+
+
+
+
+    function signUp() {
+        const userData = {
+            nombre: nombre,
+            email: email,
+            password: password,
+            foto_perfil: foto,
+            online: false
+        }
+
+        if (password === passwordConfirm) {
+            fetch("http://localhost:4000/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log("usuario creado exitosamente")
+                sessionStorage.setItem("isLogged", "true")
+                fetch('http://localhost:4000/conseguirID', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        sessionStorage.setItem("userId", data[0].id_user); // guardar userId 
+                        console.log("userId guardado en sessionStorage:", data[0].id_usuario);
+                        router.replace("./chat")
+                    })
+            })
+        } else {
+            console.log("Contraseñas no coinciden")
+        }
+
+
+
+    }
+
+
 
 
 
@@ -58,11 +100,14 @@ export default function RegisterPage() {
         <div className={styles.Contenedorbody}>
             <div className={styles.loginContainer}>
                 <h2>Register</h2>
+                <br></br>
+                <p>Complete los datos para el registro</p>
                 <Input page="register" placeholder="Escriba su nombre" type="text" onChange={(e) => {setNombre(e.target.value)}}/>
-                <Input page="register" placeholder="Escriba su Conraseña" type="password" onChange={(e) => {setPassword(e.target.value)}}/>
+                <Input page="register" placeholder="Escriba su Contraseña" type="password" onChange={(e) => {setPassword(e.target.value)}}/>
+                <Input page="register" placeholder="Escriba su Contraseña De nuevo" type="password" onChange={(e) => {setPasswordConfirm(e.target.value)}}/>
                 <Input page="register" placeholder="Escriba su mail" type="email" onChange={(e) => {setEmail(e.target.value)}}/>
                 <Input page="register" placeholder="Ponga el enlace de su foto (publico)" type="text" onChange={(e) => {setFoto(e.target.value)}}/>
-                <Button onClick={signUp} page="register" text="hola como estas"></Button>
+                <Button onClick={exists} page="register" text="Registrarse"></Button>
             </div>
             
         </div>

@@ -36,10 +36,10 @@ export default function LoginPage() {
         let encontrado = false;
         for (let i = 0; i < usuarios.length; i++) {
             if (usuarios[i].email === user && usuarios[i].contraseña === password) {
-                encontrado = true;
-                setIdUsuario(usuarios[i].id_user)
+                sessionStorage.setItem("userId", usuarios[i].id_user)
+                sessionStorage.setItem("isLogged", "true")
                 console.log("Login exitoso");
-                router.push(`/chat?id_user=${usuarios[i].id_user}`);
+                router.push("./chat");
                 break;
             }
         }
