@@ -1,4 +1,9 @@
 .message {
     color: black;
     display: flex;
+    background-color: #e3eafc;
+    height: fit-content;
+    width: fit-content;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
 }

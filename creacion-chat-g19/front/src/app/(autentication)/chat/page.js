@@ -19,7 +19,7 @@ export default function Chats() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-      setIdUser(searchParams.get("id_user"))
+    setIdUser(searchParams.get("id_user"))
   }, [])
 
   useEffect(() => {
@@ -29,69 +29,71 @@ export default function Chats() {
   }, [idChat]); //useEffect para cuando cambia idChat (diferente a la variable id_chat)
 
   useEffect(() => {
-    fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
-      .then((response) => response.json())
-      .then((result) => {
-        setContacts(result);
-      }); // .then es la forma para comunicarte con elback
-  }, [id_user]);
-
-    function mostrarChat(id_chat) {
-      console.log(id_user);
-      console.log("id chat:", id_chat);
-      fetch(`http://localhost:4000/seleccionarChat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_user: id_user,
-          id_chat: id_chat
-        }),
-      })
+    if (id_user) {
+      fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
         .then((response) => response.json())
-        .then(() => {
-          setIdChat(id_chat);
-          console.log("Chat seleccionado:", id_chat);
-          console.log("estado: ", idChat);
-          return id_chat;
-        })
-        .then((id_chat) =>{
-          console.log("funcion traerMensajes");
-          traerMensajes(id_chat);
+        .then((result) => {
+          setContacts(result);
         });
     }
+  }, [id_user]);
 
-    function traerMensajes(id_chat) {
-      console.log("entro a traer mensajes");
-      if (id_chat == 0) {
-        console.log("No hay chat seleccionado");
-      }
-      fetch(`http://localhost:4000/obtenerMensajes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_user: id_user,
-          id_chat: id_chat
-        }),
+  function mostrarChat(id_chat) {
+    console.log("id chat:", id_chat);
+    fetch(`http://localhost:4000/seleccionarChat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_user: id_user,
+        id_chat: id_chat
+      }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setIdChat(id_chat);
+        console.log("Chat seleccionado:", id_chat);
+        console.log("estado: ", idChat);
+        return id_chat;
       })
+      .then((id_chat) => {
+        console.log("funcion traerMensajes");
+        traerMensajes(id_chat);
+      });
+  }
+
+  function traerMensajes(id_chat) {
+    console.log("entro a traer mensajes");
+    if (id_chat == 0) {
+      console.log("No hay chat seleccionado");
+    }
+    fetch(`http://localhost:4000/obtenerMensajes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_user: id_user,
+        id_chat: id_chat
+      }),
+    })
       .then((response) => response.json())
       .then((response) => {
         setMensajes(response);
         return response;
       })
-      .then((mensajes)=> console.log(mensajes))
+      .then((mensajes) => console.log(mensajes))
   }
 
   return (
     <>
+        <Title title="Chats" className={styles.tituloChat}></Title>
       <div className={styles.chats}>
         <div className={styles.contenedorcontactos}>
-        <Title title="Chats" className={styles.tituloChat}></Title>
+         
           {contacts.length != 0 &&
-            contacts.map((element,i) => {
+            contacts.map((element, i) => {
               return (<Contact
                 key={i}
                 foto_chat={element.foto_chat}
@@ -100,13 +102,12 @@ export default function Chats() {
                 onClick={() => mostrarChat(element.id_chat)}
                 className={styles.Contact}
               ></Contact>)
-          })}
+            })}
         </div>
 
         <div className={styles.contenedorchatindividual}>
-          <p>chat individual</p>
           {mensajes.length != 0 &&
-            mensajes.map((element,i) => {
+            mensajes.map((element, i) => {
               return (<Message
                 key={i}
                 textoMensaje={element.content}
