@@ -1,26 +1,39 @@
 "use client";
-import Contact from "../../../components/Contact";
-import Button from "../../../components/Button";
-import Message from "../../../components/Message";
-import Input from "../../../components/Input";
+
+
+
+import Contact from "@/components/Contact"; 
+import Button from "@/components/Button"; 
+import Message from "@/components/Message"; 
+import Input from "@/components/Input"; 
 import Title from "@/components/Title";
-import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import styles from "@/app/(autentication)/chat/page.module.css";
+import { useRouter, useSearchParams } from "next/navigation";
+import styles from "@/app/chat/page.module.css";  
 
 export default function Chats() {
+
+  const router = useRouter()
+  const [chatSeleccionado, setChatSeleccionado] = useState(null);
+  const [mensajes, setMensajes] = useState([]);
+  const [nuevoMensaje, setNuevoMensaje] = useState("");
   const [contacts, setContacts] = useState([]);
+
+  
   const [idChat, setIdChat] = useState(0);
   const [id_user, setIdUser] = useState(0);
-  const [chatSeleccionado, setChatSeleccionado] = useState([]);
-  const [mensajes, setMensajes] = useState([]);
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); 
 
   useEffect(() => {
-      setIdUser(searchParams.get("id_user"))
-  }, [])
+    try {
+        const isLogged = sessionStorage.getItem("isLogged");
+        if (isLogged !== "true") {
+            router.replace("./login")
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}, [])
 
   useEffect(() => {
     if (idChat) {
@@ -29,12 +42,16 @@ export default function Chats() {
   }, [idChat]); //useEffect para cuando cambia idChat (diferente a la variable id_chat)
 
   useEffect(() => {
-    fetch(`http://localhost:4000/mostrarContactos?id_user=${id_user}`)
-      .then((response) => response.json())
-      .then((result) => {
-        setContacts(result);
-      }); // .then es la forma para comunicarte con elback
-  }, [id_user]);
+    fetch("http://localhost:4000/mostrarContactos", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id_user: sessionStorage.getItem("userId")})
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setContacts(data);
+    }); // .then es la forma para comunicarte con elback
+  }, []);
 
     function mostrarChat(id_chat) {
       console.log(id_user);

@@ -6,6 +6,7 @@
     background: #fafdff;
     transition: border 0.2s;
     color: black;
+    width: auto;
 }
 
 .inputRegister:focus{
