@@ -13,10 +13,8 @@
     cursor: pointer;
     box-shadow: 0 2px 8px #b3c6e6;
     transition: background 0.2s, transform 0.1s;
-    margin-top: 10px;
 }
-
-    .buttonRegister:hover{
+.buttonRegister:hover{
     background: linear-gradient(90deg, #1565c0 60%, #42a5f5 100%);
     transform: translateY(-2px) scale(1.03);
 }

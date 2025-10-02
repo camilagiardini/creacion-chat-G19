@@ -27,6 +27,13 @@
     gap: 18px;
 }
 
+.loginContainer button {
+    
+}
+
+.loginContainer button:hover {
+    
+}
 
 .loginContainer .error {
     color: #d32f2f;
