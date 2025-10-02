@@ -219,7 +219,8 @@ app.get('/usuarios', async function(req,res){
 })
 
 
-app.get('/mostrarContactos', async function(req,res){
+app.get('/mostrarContactos', async function(req,res){f
+    console.log(req.query.id_user)
     try {
         const response = await realizarQuery(/*`
             SELECT DISTINCT Users.nombre, Users.foto_perfil, Users.id_user

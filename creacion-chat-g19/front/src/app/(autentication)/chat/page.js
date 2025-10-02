@@ -20,7 +20,8 @@ export default function Chats() {
 
   useEffect(() => {
     setIdUser(searchParams.get("id_user"))
-  }, [])
+    console.log("id user:", id_user);
+  }, [id_user])
 
   useEffect(() => {
     if (idChat) {
