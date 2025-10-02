@@ -30,10 +30,11 @@ export default function LoginPage() {
         })
     }, [])
 
-    setIdUsuario
-
     function singIn() {
         let encontrado = false;
+
+        console.log("usuarios: ", usuarios)
+
         for (let i = 0; i < usuarios.length; i++) {
             if (usuarios[i].email === user && usuarios[i].contraseña === password) {
                 encontrado = true;

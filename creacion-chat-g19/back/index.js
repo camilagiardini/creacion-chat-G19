@@ -219,7 +219,7 @@ app.get('/usuarios', async function(req,res){
 })
 
 
-app.get('/mostrarContactos', async function(req,res){f
+app.get('/mostrarContactos', async function(req,res){
     console.log(req.query.id_user)
     try {
         const response = await realizarQuery(/*`
