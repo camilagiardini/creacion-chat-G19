@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import styles from "@/app/(autentication)/chat/page.module.css";
 
+
+
 export default function Chats() {
   const [contacts, setContacts] = useState([]);
   const [idChat, setIdChat] = useState(0);
@@ -88,7 +90,7 @@ export default function Chats() {
 
   return (
     <>
-        <Title title="Chats" className={styles.tituloChat}></Title>
+      <Title title="Chats" className={styles.tituloChat}></Title>
       <div className={styles.chats}>
         <div className={styles.contenedorcontactos}>
          
@@ -113,11 +115,24 @@ export default function Chats() {
                 textoMensaje={element.content}
                 id_messages={element.id_messages}
                 className={styles.Message}
-              ></Message>)
+              ></Message>
+            )
             })
           }
-        </div>
+          {idChat !==0 && (
+            <div className={styles.inputContainer}>
+              <Input className={styles.inputMessage}
+                page="chat"
+                type="text"
+                onChange={(e) => setNuevoMensaje(e.target.value)}
+                placeholder="Escribe un mensaje..."
+              />
+              <Button onClick page="chat" text="enviar"></Button>
+            </div>
+          )}
       </div>
+      </div>
+
     </>
   );
 }

@@ -8,11 +8,13 @@ export default function Input(props) {
 
         <input
             className={clsx((styles.input), {
-                [styles.inputRegister] : props.page === "register"
+                [styles.inputRegister] : props.page === "register",
+                [styles.inputMessage] : props.page === "chat"
             })}
             type={props.type}
             onChange={props.onChange}
             checked={props.checked}
-            placeholder={props.placeholder}/>
+            placeholder={props.placeholder}
+        />
     )
 }

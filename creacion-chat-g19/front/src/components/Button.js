@@ -7,11 +7,13 @@ export default function Button(props){
         <>
             <button 
             className={clsx((styles.button), {
-                [styles.buttonRegister] : props.page === "register"
+                [styles.buttonRegister] : props.page === "register",
+                [styles.buttonEnviar] : props.page === "chat"
             })} 
             
-            onClick={props.onClick}
-            >{props.text}</button>
+            onClick={props.onClick} 
+            >{props.text}
+            </button>
         </>
     )
 }
