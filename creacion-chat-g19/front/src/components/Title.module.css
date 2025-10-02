@@ -5,4 +5,7 @@
 
 .tituloChat {
     box-sizing: border-box;
+    color: #1976d2;
+    background-color: #e3eafc;  
+    padding: 20px;
 }

@@ -219,7 +219,8 @@ app.get('/usuarios', async function(req,res){
 })
 
 
-app.get('/mostrarContactos', async function(req,res){
+app.get('/mostrarContactos', async function(req,res){f
+    console.log(req.query.id_user)
     try {
         const response = await realizarQuery(/*`
             SELECT DISTINCT Users.nombre, Users.foto_perfil, Users.id_user
@@ -247,10 +248,7 @@ app.get('/mostrarContactos', async function(req,res){
             LEFT JOIN Users u2 ON uc2.id_user = u2.id_user
             WHERE uc.id_user = '${req.query.id_user}';`
         )
-
-
-        console.log(response)
-        console.log("funcionó")
+        console.log("Chats por usuario: ",response)
         res.send(response)   
     } catch (error) {
         console.error(error);

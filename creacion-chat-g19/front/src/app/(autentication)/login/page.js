@@ -40,6 +40,7 @@ export default function LoginPage() {
                 setIdUsuario(usuarios[i].id_user)
                 console.log("Login exitoso");
                 router.push(`/chat?id_user=${usuarios[i].id_user}`);
+                console.log(usuarios[i].id_user);
                 break;
             }
         }
