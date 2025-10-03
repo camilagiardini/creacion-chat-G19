@@ -8,17 +8,19 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { useSocket } from '../../../hooks/useSocket.js';
 import styles from "@/app/(autentication)/chat/page.module.css";
-
 
 
 export default function Chats() {
   const [contacts, setContacts] = useState([]);
   const [idChat, setIdChat] = useState(0);
   const [id_user, setIdUser] = useState(0);
-  const [chatSeleccionado, setChatSeleccionado] = useState([]);
   const [mensajes, setMensajes] = useState([]);
+   const [nuevoMensaje, setNuevoMensaje] = useState("");
+  const [selectedContact, setSelectedContact] = useState(null);
   const searchParams = useSearchParams();
+  const { socket, isConnected } = useSocket({withCredentials: true}, "http://localhost:4000")
 
   useEffect(() => {
     setIdUser(searchParams.get("id_user"))
@@ -40,6 +42,30 @@ export default function Chats() {
         });
     }
   }, [id_user]);
+
+  useEffect(() => {
+        if (!socket) return;
+
+        // Recibir mensajes en tiempo real
+        socket.on("newMessage", (data) => {
+            console.log(data)
+            setMensajes((prev) => [...prev, {
+                id_user: data.message.id_user || "otro",
+                textoMensaje: data.message.textoMensaje,
+                hora: data.message.hora
+            }]);
+        });
+
+        // Ping de prueba
+        socket.on("pingAll", (data) => {
+            console.log(" Ping recibido:", data);
+        });
+
+        return () => {
+            socket.off("newMessage");
+            socket.off("pingAll");
+        }
+    }, [socket, idChat]);
 
   function mostrarChat(id_chat) {
     console.log("id chat:", id_chat);
@@ -68,7 +94,7 @@ export default function Chats() {
 
   function traerMensajes(id_chat) {
     console.log("entro a traer mensajes");
-    if (id_chat == 0) {
+    if (!id_chat || id_chat == 0) {
       console.log("No hay chat seleccionado");
     }
     fetch(`http://localhost:4000/obtenerMensajes`, {
@@ -84,9 +110,59 @@ export default function Chats() {
       .then((response) => response.json())
       .then((response) => {
         setMensajes(response);
+        if (socket) {
+          const roomName = `chat_${id_chat}`;
+          socket.emit("joinRoom", { room: `chat_${id_chat}` });
+          console.log(`Socket.IO: Uniéndose al room: ${roomName}`);
+        }
+
         return response;
       })
       .then((mensajes) => console.log(mensajes))
+  }
+
+  
+
+  function sendNewMessage() {
+    console.log("entro a sendNewMessage");
+    try {
+      if (nuevoMensaje.trim === " " || !selectedContact || !socket) return;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      const  messageData = {
+        id_user: id_user,
+        id_chat: idChat,
+        textoMensaje: nuevoMensaje,
+        hora: formattedDate
+      }
+      //socket.emit("sendMessage", messageData);
+
+      setNuevoMensaje("")
+
+      fetch("http://localhost:4000/sendMessage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(messageData),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Mensaje enviado:", data);
+      })
+      if (socket) {
+        socket.emit("sendMessage", messageData);
+      }
+    } catch (error) {
+      console.log("error al enviar mensaje:", error);
+    }
   }
 
   return (
@@ -114,6 +190,7 @@ export default function Chats() {
               return (<Message
                 key={i}
                 textoMensaje={element.content}
+                hora={element.hora}
                 id_messages={element.id_messages}
                 className={styles.Message}
               ></Message>
@@ -128,12 +205,11 @@ export default function Chats() {
                 onChange={(e) => setNuevoMensaje(e.target.value)}
                 placeholder="Escribe un mensaje..."
               />
-              <Button onClick page="chat" text="enviar"></Button>
+              <Button onClick={sendNewMessage} page="chat" text="enviar"></Button>
             </div>
           )}
       </div>
       </div>
 
     </>
-  );
-}
+  );}

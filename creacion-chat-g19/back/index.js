@@ -2,6 +2,7 @@ var express = require('express'); //Tipo de servidor: Express
 var bodyParser = require('body-parser'); //Convierte los JSON
 var cors = require('cors');
 const { realizarQuery } = require('./modulos/mysql');
+const session = require("express-session"); 
 
 var app = express(); //Inicializo express
 var port = process.env.PORT || 4000; //Ejecuto el servidor en el puerto 3000
@@ -18,9 +19,33 @@ app.get('/', function (req, res) {
 });
 
 //Pongo el servidor a escuchar
-app.listen(port, function () {
-    console.log(`Server running in http://localhost:${port}`);
+const server = app.listen(port, () => {
+console.log(`Servidor NodeJS corriendo en http://localhost:${port}/`);
 });
+
+const io = require("socket.io")(server, {
+cors: {
+origin: ["http://localhost:3000", "http://localhost:3001"], // Permitir el origen localhost:3000
+methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
+credentials: true, // Habilitar el envío de cookies
+},
+});
+
+
+
+const sessionMiddleware = session({
+//Elegir tu propia key secreta
+secret: "sebasnoentra",
+resave: false,
+saveUninitialized: false,
+});
+
+app.use(sessionMiddleware);
+io.use((socket, next) => {
+sessionMiddleware(socket.request, {}, next);
+});
+
+
 
 // ACA EMPIEZA EL TRABAJO NUESTRO
 
@@ -344,4 +369,74 @@ app.post('/obtenerMensajes', async function (req,res){
         console.error(error);
         res.send("error al obtener mensajes");
     }
+});
+
+app.post('/sendMessage', async (req, res) => {
+    console.log("entro a sendMessage")
+    const { id_user, id_chat, textoMensaje, hora } = req.body;
+
+    if (!id_user || !id_chat || !textoMensaje || !hora) {
+        return res.status(400).send({ 
+            success: false, 
+            message: 'Faltan parámetros requeridos: id_user, id_chat, textoMensaje, hora.' 
+        });
+    }
+
+    try {
+        const dbResult = await guardarMensajeEnBD(id_user, id_chat, textoMensaje, hora);
+        const room = `chat_${id_chat}`;
+        const messageData = {
+            id_user: id_user,
+            id_chat: id_chat,
+            textoMensaje: textoMensaje,
+            hora: hora,
+            id_messages: dbResult.id_mensaje 
+        };
+
+        console.log(`[Socket.IO] Emitiendo 'newMessage' al room: ${room}`);
+        io.to(room).emit("newMessage", { message: messageData });
+
+
+        res.status(200).send({
+            success: true,
+            message: 'Mensaje enviado y emitido con éxito.',
+            data: messageData
+        });
+
+    } catch (error) {
+        console.error("Error al enviar el mensaje:", error);
+        res.status(500).send({ 
+            success: false, 
+            message: 'Error interno del servidor al procesar el mensaje.' 
+        });
+    }
+});
+
+
+io.on("connection", (socket) => {
+    const req = socket.request;
+    socket.on("joinRoom", (data) => {
+        if (req.session.room != undefined && req.session.room.length > 0)
+            socket.leave(req.session.room);
+            req.session.room = data.room;
+            socket.join(req.session.room);
+            console.log("🚀 ~ io.on ~ req.session.room:", req.session.room);
+            io.to(req.session.room).emit("chat-messages", {
+                user: req.session.user,
+                room: req.session.room,
+        });
+    });
+    socket.on("pingAll", (data) => {
+        console.log("PING ALL: ", data);
+        io.emit("pingAll", { event: "Ping to all", message: data });
+    });
+   socket.on("sendMessage", (data) => {
+        io.to(req.session.room).emit("newMessage", {
+            room: req.session.room,
+            message: data,
+        });
+    });
+    socket.on("disconnect", () => {
+        console.log("Disconnect");
+    });
 });
