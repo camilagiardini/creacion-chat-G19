@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import styles from "@/app/(autentication)/chat/page.module.css";
+import Popup from "reactjs-popup";
 
 
 
@@ -18,7 +19,10 @@ export default function Chats() {
   const [id_user, setIdUser] = useState(0);
   const [chatSeleccionado, setChatSeleccionado] = useState([]);
   const [mensajes, setMensajes] = useState([]);
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
+
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [mailInput, setMailInput] = useState("");
 
   useEffect(() => {
     setIdUser(searchParams.get("id_user"))
@@ -40,6 +44,18 @@ export default function Chats() {
         });
     }
   }, [id_user]);
+
+
+  //Abrir el popup
+    const openPopup = () => {
+        setPopupOpen(true)
+    }
+
+    //Cerrar el popup
+    const closePopup = () => {
+        setPopupOpen(false)
+        setMailInput("") //Limpia el input al cerrar el popup
+    }
 
   function mostrarChat(id_chat) {
     console.log("id chat:", id_chat);
@@ -89,9 +105,70 @@ export default function Chats() {
       .then((mensajes) => console.log(mensajes))
   }
 
+
+
+
+
+
+
+
+
+
+  function newChat() {
+    const userId = sessionStorage.getItem("userId")
+        console.log(userId)
+        try {
+            // 1. compruebo que el mail sea valido
+            if(!mailInput.trim()) {
+                alert("Por favor, ingresa un mail")
+                return
+            }
+            
+            //2. Creo la constante de los datos del Nuevo Chat
+            const datosNewChat = {
+                email: mailInput.trim(),
+                nombre: "",
+                id_usuarioAjeno: 0
+            }
+
+            console.log("Datos del nuevo Chat: ", datosNewChat)
+    
+            // 3. Realizo el fetch que busca al usuario con ese mail.
+            fetch('http://localhost:4000/conseguirUser', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({email: datosNewChat.email})
+            })
+            .then(res => res.json())
+            .then(dataUser => {
+                console.log("Datos del usuario: ", dataUser)
+                if (dataUser.length === 1) {
+                    console.log("Se ha encontrado al usuario")
+                    datosNewChat.nombre = dataUser.vector[0].nombre
+                    datosNewChat.id_usuarioAjeno = dataUser.vector[0].id_user
+                    setContacts([...contacts, dataUser.vector[0]])
+                    fetch('http://localhost:4000/newChat', {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({id_usuarioAjeno: datosNewChat.id_usuarioAjeno, id_usuarioPropio: userId, tipo_chat: false})
+                    })
+                    .then(res => res.json())
+                    .then(chat => {
+                        console.log(chat)
+                        closePopup()
+                        
+                    })
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+  }
+
   return (
     <>
       <Title title="Chats" className={styles.tituloChat}></Title>
+      <Button use="nuevoChat" text="Nuevo Chat" onClick={openPopup}/>
       <div className={styles.chats}>
         <div className={styles.contenedorcontactos}>
          
@@ -133,7 +210,27 @@ export default function Chats() {
           )}
       </div>
       </div>
-
+      <Popup
+                open={isPopupOpen}
+                onClose={closePopup}
+                modal
+                nested
+                closeOnDocumentClick={false}
+                >
+                    <div className={styles.modal}>
+                        <div className={styles.header}>
+                            <h2>Nuevo Chat</h2>
+                        </div>
+                        <div className={styles.content}>
+                            <p>Ingresa el mail del usuario con quien quieres chatear</p>
+                            <Input type="mail" placeholder="ejemplo@mail.com" value={mailInput} onChange={(e) =>setMailInput(e.target.value)} use="mailNewChat"/>
+                        </div>
+                        <div className={styles.actions}>
+                            <button onClick={closePopup} className={styles.cancelBtn}>Cancelar</button>
+                            <button onClick={newChat} className={styles.createBtn}>Crear chat</button>
+                        </div>
+                    </div>
+            </Popup>
     </>
   );
 }
