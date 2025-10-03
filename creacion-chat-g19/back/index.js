@@ -289,6 +289,69 @@ app.post('/conseguirID', async function(req,res){
     res.send(response)
 })
 
+app.post('/conseguirUser', async function(req,res){
+    const response = await realizarQuery(`
+        SELECT * FROM Users WHERE email = '${req.body.email}'     
+    `)
+    console.log(response)
+    res.send(response)
+})
+
+
+app.post('/newChat', async function (req, res) {
+
+    try {
+
+
+        // 1. Buscar si existe un chat con esa persona
+        const existingChat = await realizarQuery(`
+            SELECT uc1.id_chat
+            FROM UsersChats uc1
+            INNER JOIN UsersChats uc2 ON uc1.id_chat = uc2.id_chat
+            WHERE uc1.id_user = ${req.body.id_usuarioPropio} AND uc2.id_user = ${req.body.id_usuarioAjeno};    
+        `)
+
+        // 2. Verificar si existe
+        if (existingChat.length === 1) {
+            return res.send({ ok: false, mensaje: "Ya existe un chat entre ustedes", id_chat: existingChat[0].id_chat })
+        }
+
+
+        //3. Crear el chat
+        const crearChat = await realizarQuery(`
+            INSERT INTO Chats (nombre_chat, fecha_creacion, tipo_chat, foto_chat, id_ultimo_mensaje)   
+            VALUES ("", ${Date.now()}, ${req.body.tipo_chat}, "", 0)
+        `);
+
+        //4. Buscar nuevo ChatID
+        const NuevoChatId = crearChat.insertId // insertId es un mensaje que devuelve predeterminadamente al realizar una sentencia "INSERT INTO"
+
+
+        await realizarQuery(`
+            INSERT INTO UsersChats (id_chat, id_user)
+            VALUES (${NuevoChatId}, ${req.body.id_usuarioPropio})        
+        `);
+
+        await realizarQuery(`
+            INSERT INTO UsersChats (id_chat, id_users)
+            VALUES (${NuevoChatId}, ${req.body.id_usuarioAjeno})        
+        `);
+
+        res.send({ ok: true, mensaje: "Se ha podido crear el chat y su relacion con éxito.", id_chat: NuevoChatId })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ ok: false, mensaje: "Error al crear el chat" })
+    }
+})
+
+
+
+
+
+
+
+
+
 app.post('/seleccionarChat', async function (req,res){
     console.log("mostrar chat seleccionado")
     try {
