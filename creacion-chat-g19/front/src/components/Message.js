@@ -4,7 +4,7 @@ import styles from "./Message.module.css"
 export default function Message(props) {
     return(
         <>
-            <p className={styles.message}>{props.textoMensaje} {props.hora}</p>
+            <p className={styles.message}>{props.content}</p>
         </>
     )
 }

@@ -434,44 +434,28 @@ app.post('/obtenerMensajes', async function (req,res){
     }
 });
 
-app.post('/sendMessage', async (req, res) => {
-    console.log("entro a sendMessage")
-    const { id_user, id_chat, textoMensaje, hora } = req.body;
-
-    if (!id_user || !id_chat || !textoMensaje || !hora) {
-        return res.status(400).send({ 
-            success: false, 
-            message: 'Faltan parámetros requeridos: id_user, id_chat, textoMensaje, hora.' 
-        });
-    }
-
+app.post("/sendMessage", async (req, res) => {
     try {
-        const dbResult = await guardarMensajeEnBD(id_user, id_chat, textoMensaje, hora);
-        const room = `chat_${id_chat}`;
-        const messageData = {
-            id_user: id_user,
-            id_chat: id_chat,
-            textoMensaje: textoMensaje,
-            hora: hora,
-            id_messages: dbResult.id_mensaje 
-        };
+        const { content, id_user, id_chat, formattedDate } = req.body;
 
-        console.log(`[Socket.IO] Emitiendo 'newMessage' al room: ${room}`);
-        io.to(room).emit("newMessage", { message: messageData });
+        if (content.length > 1) {
 
+            await realizarQuery(
+                `INSERT INTO Messages(fecha_envio, content, leido, id_user, id_chat) VALUES ('${formattedDate}', '${content}', 0, '${id_user}', '${id_chat}')`
+            );
 
-        res.status(200).send({
-            success: true,
-            message: 'Mensaje enviado y emitido con éxito.',
-            data: messageData
-        });
+            res.send({
+                message: "ok",
+                content: content
+            });
 
+        } else {
+            res.send({
+                message: "El mensaje está vacío"
+            });
+        }
     } catch (error) {
-        console.error("Error al enviar el mensaje:", error);
-        res.status(500).send({ 
-            success: false, 
-            message: 'Error interno del servidor al procesar el mensaje.' 
-        });
+        res.send(error);
     }
 });
 
